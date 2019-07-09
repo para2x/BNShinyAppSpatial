@@ -1,0 +1,22 @@
+id,Variable,media.type,Type,size
+RR,Response Ratio,NA,NA,40
+"	BApplication",Biochar application rate,1,Management,30
+NAP,Nitrogen application rate,1,Management,30
+latitude,latitude,1,Management,30
+biochar_pH,Biochar pH,2,Biochar,30
+highestT,Highest temperature,2,Biochar,30
+Biochar carbon,Biochar C,2,Biochar,30
+"	Biochar.Nitrogen","	Bicohar N",2,Biochar,30
+Biochar.Ash,Biochar ash,2,Biochar,30
+Biochar C/N,Biochar C/N,2,Biochar,30
+Soil_PH,Soil pH,3,Soil,30
+CEC,CEC,3,Soil,30
+Soil Organic Carbon,SOC,3,Soil,30
+sand,Sand,3,Soil,30
+silt,Silt,3,Soil,30
+clay,Clay,3,Soil,30
+feedstock,Feedstock,2,Biochar,30
+PyrolysisType,Pyrolysis rate,2,Biochar,30
+texture,Texture,3,Soil,30
+croptype,Crop type,1,Management,30
+longitude,longitude,1,Management,30

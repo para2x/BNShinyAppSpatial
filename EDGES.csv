@@ -1,0 +1,36 @@
+from,to,weight,type
+"	Biochar.Nitrogen",Biochar C/N,10,hyperlink
+Biochar C/N,RR,10,hyperlink
+Biochar carbon,Biochar C/N,10,hyperlink
+Biochar carbon,Biochar.Ash,10,hyperlink
+Biochar.Ash,RR,,
+Biochar.Ash,biochar_pH,10,hyperlink
+biochar_pH,RR,10,hyperlink
+CEC,RR,10,hyperlink
+clay,CEC,10,hyperlink
+croptype,RR,10,hyperlink
+feedstock,"	Biochar.Nitrogen",10,hyperlink
+feedstock,Biochar carbon,10,hyperlink
+highestT,Biochar carbon,10,hyperlink
+highestT,Biochar.Ash,10,hyperlink
+latitude,Soil_PH,10,hyperlink
+latitude,RR,,
+latitude,Soil Organic Carbon,10,hyperlink
+NAP,"	BApplication",10,hyperlink
+NAP,RR,10,hyperlink
+PyrolysisType,Biochar carbon,10,hyperlink
+PyrolysisType,highestT,,
+PyrolysisType,Biochar.Ash,10,hyperlink
+sand,silt,10,hyperlink
+sand,clay,10,hyperlink
+sand,Soil Organic Carbon,10,hyperlink
+silt,clay,10,hyperlink
+"	BApplication",RR,10,hyperlink
+Soil Organic Carbon,CEC,,
+Soil Organic Carbon,RR,10,hyperlink
+Soil_PH,CEC,,
+Soil_PH,RR,10,hyperlink
+texture,sand,,
+texture,RR,10,hyperlink
+texture,croptype,,
+texture,Soil Organic Carbon,,
