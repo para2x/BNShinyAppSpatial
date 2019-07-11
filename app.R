@@ -73,9 +73,9 @@ server <- function(input, output) {
     
     leaflet() %>%
       setView(lng = -94.0589, lat = 42.3601, zoom = 15) %>%
-      #%>%
-      addProviderTiles(providers$OpenTopoMap,
-                       options = providerTileOptions(opacity = 0.75)) %>%
+      addTiles(urlTemplate = "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G", attribution = 'Google')%>%
+#      addProviderTiles(providers$OpenTopoMap,
+#                       options = providerTileOptions(opacity = 0.75)) %>%
       addProviderTiles(providers$Stamen.TonerLabels)%>%
       addDrawToolbar(
         polylineOptions=FALSE,
