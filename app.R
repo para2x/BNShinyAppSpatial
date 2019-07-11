@@ -132,6 +132,9 @@ server <- function(input, output) {
               bbxstr,
               "</coordinates></Box></BBOX></Filter>"
             )
+          
+          message(downstr)
+          
           tryCatch({
           httr::GET(downstr, httr::write_disk(fileName), verbose=T)
 
