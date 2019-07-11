@@ -131,12 +131,10 @@ server <- function(input, output) {
               "</coordinates></Box></BBOX></Filter>"
             )
           tryCatch({
-          download.file(downstr, fileName)
-          
-          
-          ###
+          httr::GET(downstr, httr::write_disk(fileName), verbose=T)
+
           soilfile <- rgdal::readOGR(dsn = fileName,
-                              layer =  ogrListLayers(fileName)[1],disambiguateFIDs=TRUE,require_geomType="wkbPolygon")
+                                     disambiguateFIDs=TRUE,require_geomType="wkbPolygon")
           ## deteling temporary file downloaded
           unlink(fileName)
           #projecting the map
