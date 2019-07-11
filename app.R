@@ -202,15 +202,7 @@ server <- function(input, output) {
               })
               ) %>%
               tidyr::unnest(Biochar)
-          },
-          error = function(e) {
-            showModal(modalDialog(
-              title = "Error in Bayesian Network",
-              conditionMessage(e)
-            ))
-            return(NULL)
-            
-          })
+
           
           values$Farmobj$Soil<-soilfile
           
@@ -236,7 +228,15 @@ server <- function(input, output) {
                 values$Farmobj$Centriod@coords[1,2],
                 zoom=16)
         
-        
+          },
+          error = function(e) {
+            showModal(modalDialog(
+              title = "Error in Bayesian Network",
+              conditionMessage(e)
+            ))
+            return(NULL)
+            
+          })        
 
           
           
