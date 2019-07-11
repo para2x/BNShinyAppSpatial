@@ -216,6 +216,7 @@ server <- function(input, output) {
 
         leafletProxy("mymap", data = soilfile) %>%
             clearShapes() %>%
+            clearControls() %>%
           addPolygons(fillColor = ~pal(Pr),
                       weight=1,
                        popup = ~Pr,
