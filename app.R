@@ -208,6 +208,7 @@ server <- function(input, output) {
               title = "Error in Bayesian Network",
               conditionMessage(e)
             ))
+            return(NULL)
             
           })
           
