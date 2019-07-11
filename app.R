@@ -126,7 +126,9 @@ server <- function(input, output) {
           fileName <- tempfile()
           downstr <-
             paste0(
-              "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWM.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=MapunitPoly&FILTER=<Filter><BBOX><PropertyName>Geometry</PropertyName><Box%20srsName='EPSG:4326'><coordinates>",
+              "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWM.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=MapunitPoly&FILTER=<Filter><BBOX><PropertyName>Geometry</PropertyName><Box%20srsName=",
+              paste("'","EPSG:4326","'",sep="")  
+              ,"><coordinates>",
               bbxstr,
               "</coordinates></Box></BBOX></Filter>"
             )
