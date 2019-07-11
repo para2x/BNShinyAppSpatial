@@ -221,7 +221,7 @@ server <- function(input, output) {
                       color = "white",
                       dashArray = "3",
                       smoothFactor = 0.9,
-                      fillOpacity = 0.6)%>%
+                      fillOpacity = 0.4)%>%
           addLegend("bottomright", pal = pal,
                     values = ~Pr,
                     title = "",
