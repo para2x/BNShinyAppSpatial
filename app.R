@@ -32,19 +32,19 @@ ui <- fluidPage(
       sidebarPanel(width = 3,
 
 
-#                fluidRow(
-#                column(12,
-#                       fluidRow(column(
-#                         12, 
-##                           textInput("BpH", label = h5("Biochar pH "), value = ""),
-#                           textInput(
-#                             "HT",
-#                             label = h5("Highest temperature "),
-#                             value = ""
-#                           ),
-#                           textInput("BC", label = h5("Biochar C "), value = "")
-#                         
-##                       ))))
+                fluidRow(
+                column(12,
+                       fluidRow(column(
+                         12, 
+                           textInput("BpH", label = h5("Biochar pH "), value = ""),
+                           textInput(
+                             "HT",
+                             label = h5("Highest temperature "),
+                             value = ""
+                           ),
+                           textInput("BC", label = h5("Biochar C "), value = "")
+                         
+                       ))))
 
 
       ),
