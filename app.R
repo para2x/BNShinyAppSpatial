@@ -27,23 +27,40 @@ options(shiny.trace = FALSE)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   br(),
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(width = 1,
+   # Sidebar with a slider input for number of bins 
+   sidebarLayout(
+      sidebarPanel(width = 3,
 
-    ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(width = 11,
-              
-              fluidRow(
+
+                fluidRow(
                 column(12,
-                       fluidRow(leafletOutput("mymap"))
-                       
-                ))
-    )
-  )
+                       fluidRow(column(
+                         12, 
+                           textInput("BpH", label = h5("Biochar pH "), value = ""),
+                           textInput(
+                             "HT",
+                             label = h5("Highest temperature "),
+                             value = ""
+                           ),
+                           textInput("BC", label = h5("Biochar C "), value = "")
+                         
+                       ))))
+
+
+      ),
+      
+      # Show a plot of the generated distribution
+      mainPanel(width = 9,
+
+        fluidRow(
+          column(12,
+            fluidRow(leafletOutput("mymap"))
+            
+          ))
+      )
+   )
 )
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
