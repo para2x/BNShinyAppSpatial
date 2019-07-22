@@ -35,7 +35,8 @@ ui <- fluidPage(
                 fluidRow(
                 column(12,
                        fluidRow(column(
-                         12
+                         12,
+                         h4("If you received an error regarding the connection please try again. ")
                          
                        ))))
 
