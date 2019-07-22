@@ -104,7 +104,7 @@ server <- function(input, output) {
       TotalArea<-(rgeos::gArea(tmp.proj.soil,F))*(2.47)/(10000) 
      
       message(TotalArea)
-      if(TotalArea<200){
+      if(TotalArea<50){
         values$Farmobj$Polybounds<-boundry
         values$Farmobj$Centriod<-cent
         values$Farmobj$Area<-TotalArea
@@ -246,7 +246,7 @@ server <- function(input, output) {
       }else{
         showModal(modalDialog(
           title = "Exceeded the area limit",
-          "The area of the selected polygon is more than 200 ac. \n Please start with drawing a smaller polygon.",
+          "The area of the selected polygon is more than 50 ac. \n Please start with drawing a smaller polygon.",
           easyClose = TRUE,
           footer = NULL
         ))
