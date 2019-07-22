@@ -41,8 +41,7 @@ ui <- fluidPage(
                              "HT",
                              label = h5("Highest temperature "),
                              value = ""
-                           ),
-                           textInput("BC", label = h5("Biochar C "), value = "")
+                           )
                          
                        ))))
 
