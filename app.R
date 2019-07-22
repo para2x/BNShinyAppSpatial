@@ -29,7 +29,7 @@ ui <- fluidPage(
   br(),
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
-      sidebarPanel(width = 3,
+      sidebarPanel(width = 0,
 
 
                 fluidRow(
