@@ -35,13 +35,7 @@ ui <- fluidPage(
                 fluidRow(
                 column(12,
                        fluidRow(column(
-                         12, 
-                           textInput("BpH", label = h5("Biochar pH "), value = ""),
-                           textInput(
-                             "HT",
-                             label = h5("Highest temperature "),
-                             value = ""
-                           )
+                         12
                          
                        ))))
 
