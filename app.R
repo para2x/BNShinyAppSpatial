@@ -36,7 +36,7 @@ ui <- fluidPage(
                 column(12,
                        fluidRow(column(
                          12,
-                         h4("If you received an error regarding the connection please try again. ")
+                         h4("After selecting your area of interest, if you received an error regarding the connection please try again. ")
                          
                        ))))
 
