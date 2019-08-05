@@ -16,6 +16,7 @@ suppressPackageStartupMessages({
   library(sp)
   library(geojsonio)
   library(rgdal)
+  library(soilDB)
 })
 
 source('UtilFuncs.R')$value
@@ -27,32 +28,32 @@ options(shiny.trace = FALSE)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   br(),
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(width = 0,
-
-
-                fluidRow(
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(width = 0,
+                 
+                 
+                 fluidRow(
+                   column(12,
+                          fluidRow(column(
+                            12,
+                            h4("After selecting your area of interest, if you received an error regarding the connection please try again. ")
+                            
+                          ))))
+                 
+                 
+    ),
+    
+    # Show a plot of the generated distribution
+    mainPanel(width = 9,
+              
+              fluidRow(
                 column(12,
-                       fluidRow(column(
-                         12,
-                         h4("After selecting your area of interest, if you received an error regarding the connection please try again. ")
-                         
-                       ))))
-
-
-      ),
-      
-      # Show a plot of the generated distribution
-      mainPanel(width = 9,
-
-        fluidRow(
-          column(12,
-            fluidRow(leafletOutput("mymap"))
-            
-          ))
-      )
-   )
+                       fluidRow(leafletOutput("mymap"))
+                       
+                ))
+    )
+  )
 )
 
 
@@ -69,8 +70,8 @@ server <- function(input, output) {
     leaflet() %>%
       setView(lng = -94.0589, lat = 42.3601, zoom = 15) %>%
       addTiles(urlTemplate = "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G", attribution = 'Google')%>%
-#      addProviderTiles(providers$OpenTopoMap,
-#                       options = providerTileOptions(opacity = 0.75)) %>%
+      #      addProviderTiles(providers$OpenTopoMap,
+      #                       options = providerTileOptions(opacity = 0.75)) %>%
       addProviderTiles(providers$Stamen.TonerLabels)%>%
       addDrawToolbar(
         polylineOptions=FALSE,
@@ -87,7 +88,7 @@ server <- function(input, output) {
         ),
         #clearFeatures=TRUE,
         editOptions = editToolbarOptions(selectedPathOptions = selectedPathOptions()))
-      
+    
   })
   
   
@@ -102,7 +103,7 @@ server <- function(input, output) {
       zone<-utmzonefinder(cent@coords[1])
       tmp.proj.soil<-sp::spTransform(boundry, CRS(paste0("+proj=utm +zone=",zone," ellps=WGS84")))
       TotalArea<-(rgeos::gArea(tmp.proj.soil,F))*(2.47)/(10000) 
-     
+      
       message(TotalArea)
       if(TotalArea<50){
         values$Farmobj$Polybounds<-boundry
@@ -115,54 +116,56 @@ server <- function(input, output) {
           incProgress(0.1, message = paste("Loading shape files"))
           
           new.point<-bbox(values$Farmobj$Polybounds)
-          bbxstr<-paste0(round(new.point[1,1],3),",",round(new.point[2,1],3)," ",round(new.point[1,2],3),
-                         ",",round(new.point[2,2],3))
-          ##downling the desire bbox
-          fileName <- tempfile()
-          downstr <-
-            paste0(
-              "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWM.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=MapunitPoly&FILTER=<Filter><BBOX><PropertyName>Geometry</PropertyName><Box%20srsName=",
-              paste("'","EPSG:4326","'",sep="")  
-              ,"><coordinates>",
-              bbxstr,
-              "</coordinates></Box></BBOX></Filter>"
-            )
-          
-          message(downstr)
+          # bbxstr<-paste0(round(new.point[1,1],3),",",round(new.point[2,1],3)," ",round(new.point[1,2],3),
+          #                ",",round(new.point[2,2],3))
+          # ##downling the desire bbox
+          # fileName <- tempfile()
+          # downstr <-
+          #   paste0(
+          #     "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWM.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=MapunitPoly&FILTER=<Filter><BBOX><PropertyName>Geometry</PropertyName><Box%20srsName=",
+          #     paste("'","EPSG:4326","'",sep="")  
+          #     ,"><coordinates>",
+          #     bbxstr,
+          #     "</coordinates></Box></BBOX></Filter>"
+          #   )
+          # 
+          # message(downstr)
           
           tryCatch({
-          httr::GET(downstr, httr::write_disk(fileName), verbose=T)
-
-          soilfile <- rgdal::readOGR(dsn = fileName,
-                                     disambiguateFIDs=TRUE,require_geomType="wkbPolygon")
-          ## deteling temporary file downloaded
-          unlink(fileName)
-          #projecting the map
-          proj4string(soilfile) <- CRS("+init=epsg:3857")
-          soilfile <- spTransform(soilfile,  CRS("+ellps=WGS84 +proj=longlat +datum=WGS84 +no_defs"))
-          clip <- rgeos::gIntersection(values$Farmobj$Polybounds, soilfile, byid = T) #clip polygon soil file with polygon SP
-          # what polygons are in the cliped, keep them
-          keep<-unlist(lapply(row.names(clip),function(x){trimws(substr(x,2,nchar(x)))}))
-          newdata<-soilfile@data[as.numeric(keep),]
-          ## some change in name ID of datframe for matching it with polygons
-          row.names(newdata)<-unlist(lapply(clip@polygons, function(x){x@ID}))
-          # adding new dataframe to the cliped polygons
-          soilfile <-SpatialPolygonsDataFrame(clip,data=newdata)
-          ################################ retieving the soil parameters
-          incProgress(0.1, message = paste("Loading soil data"))
-          dfsL<-soildataret(soilfile$mukey)
-          incProgress(0.4, message = paste("Manipulating soil parameters"))
-          ##merging shap file and data
-          aggr<-dfsL%>%group_by(mukey,muname)%>%summarise_all(funs(mean))
-          mrg<-merge(aggr,soilfile@data, by.x="mukey", by.y="mukey",all=TRUE)
-          soilfile@data<-mrg
-          #
-          ## finding area of each polygon
-          tmp.proj.soil<-spTransform(soilfile, CRS(paste0("+proj=utm +zone=",values$Farmobj$UTMZone," ellps=WGS84")))
-          soilfile@data$muareaacres<-(rgeos::gArea(tmp.proj.soil,T))*(2.47)/(10000)  # convert m2 to ac
-          
-          #browser()
-          
+            b <- c(round(new.point[1,1],3), round(new.point[2,1],3),round(new.point[1,2],3), round(new.point[2,2],3))
+            soilfile <- soilDB::mapunit_geom_by_ll_bbox(b) # about 20 seconds
+            #httr::GET(downstr, httr::write_disk(fileName), verbose=T)
+            
+            #soilfile <- rgdal::readOGR(dsn = fileName,
+            #                           disambiguateFIDs=TRUE,require_geomType="wkbPolygon")
+            ## deteling temporary file downloaded
+            #unlink(fileName)
+            #projecting the map
+            #proj4string(soilfile) <- CRS("+init=epsg:3857")
+            #soilfile <- spTransform(soilfile,  CRS("+ellps=WGS84 +proj=longlat +datum=WGS84 +no_defs"))
+            clip <- rgeos::gIntersection(values$Farmobj$Polybounds, soilfile, byid = T) #clip polygon soil file with polygon SP
+            # what polygons are in the cliped, keep them
+            keep<-unlist(lapply(row.names(clip),function(x){trimws(substr(x,2,nchar(x)))}))
+            newdata<-soilfile@data[as.numeric(keep),]
+            ## some change in name ID of datframe for matching it with polygons
+            row.names(newdata)<-unlist(lapply(clip@polygons, function(x){x@ID}))
+            # adding new dataframe to the cliped polygons
+            soilfile <-SpatialPolygonsDataFrame(clip,data=newdata)
+            ################################ retieving the soil parameters
+            incProgress(0.1, message = paste("Loading soil data"))
+            dfsL<-soildataret(soilfile$mukey)
+            incProgress(0.4, message = paste("Manipulating soil parameters"))
+            ##merging shap file and data
+            aggr<-dfsL%>%group_by(mukey,muname)%>%summarise_all(funs(mean))
+            mrg<-merge(aggr,soilfile@data, by.x="mukey", by.y="mukey",all=TRUE)
+            soilfile@data<-mrg
+            #
+            ## finding area of each polygon
+            tmp.proj.soil<-spTransform(soilfile, CRS(paste0("+proj=utm +zone=",values$Farmobj$UTMZone," ellps=WGS84")))
+            soilfile@data$muareaacres<-(rgeos::gArea(tmp.proj.soil,T))*(2.47)/(10000)  # convert m2 to ac
+            
+            #browser()
+            
             soilfile@data<-as_tibble(soilfile@data) %>%
               tidyr::nest(-mukey)%>%
               mutate(Biochar=purrr::map(data, function(layerdata){
@@ -196,38 +199,38 @@ server <- function(input, output) {
                                     res[[1]],
                                     sqrt(res[[2]]),
                                     lower.tail = F)
-)
+                  )
               })
               ) %>%
               tidyr::unnest(Biochar)
-
-          
-          values$Farmobj$Soil<-soilfile
-          
-          #leaflet proxy
-          palettea<-"RdYlGn"
-          
-          pal <- colorNumeric(palette =palettea , domain = soilfile@data$Pr)
-
-        leafletProxy("mymap", data = soilfile) %>%
-            clearShapes() %>%
-            clearControls() %>%
-          addPolygons(fillColor = ~pal(Pr),
-                      weight=1,
-                       popup = ~Pr,
-                      color = "white",
-                      dashArray = "3",
-                      smoothFactor = 0.9,
-                      fillOpacity = 0.4)%>%
-          addLegend("bottomright", pal = pal,
-                    values = ~Pr,
-                    title = "",
-                    opacity = 1
-          )%>%
-          flyTo(values$Farmobj$Centriod@coords[1,1],
-                values$Farmobj$Centriod@coords[1,2],
-                zoom=16)
-        
+            
+            
+            values$Farmobj$Soil<-soilfile
+            
+            #leaflet proxy
+            palettea<-"RdYlGn"
+            
+            pal <- colorNumeric(palette =palettea , domain = soilfile@data$Pr)
+            
+            leafletProxy("mymap", data = soilfile) %>%
+              clearShapes() %>%
+              clearControls() %>%
+              addPolygons(fillColor = ~pal(Pr),
+                          weight=1,
+                          popup = ~Pr,
+                          color = "white",
+                          dashArray = "3",
+                          smoothFactor = 0.9,
+                          fillOpacity = 0.4)%>%
+              addLegend("bottomright", pal = pal,
+                        values = ~Pr,
+                        title = "",
+                        opacity = 1
+              )%>%
+              flyTo(values$Farmobj$Centriod@coords[1,1],
+                    values$Farmobj$Centriod@coords[1,2],
+                    zoom=16)
+            
           },
           error = function(e) {
             showModal(modalDialog(
@@ -237,7 +240,7 @@ server <- function(input, output) {
             return(NULL)
             
           })        
-
+          
           
           
           #browser()
@@ -258,10 +261,9 @@ server <- function(input, output) {
     #updatevisual()
     
   })
-
-
+  
+  
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
